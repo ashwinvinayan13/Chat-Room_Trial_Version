@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lobby</title>
+</head>
+<body>
+<h1>Let's Chat</h1>
+<input id="messageInput" type="text" placeholder="Type a Message....">
+<button id="sendButton">send</button>
+
+
+<script type="text/javascript">
+        let url = 'ws://localhost:8000/ws/socket-server/';
+
+        const chatSocket = new WebSocket(url)
+
+        chatSocket.onopen = function () {
+            console.log('WebSocket connection opened');
+        };
+
+        chatSocket.onmessage = function (e) {
+            let data = JSON.parse(e.data);
+            console.log('Message from server:', data.message);
+        };
+
+        chatSocket.onerror = function(e){
+            console.error('WebSocket error:', e);
+        };
+
+        chatSocket.onclose = function (e) {
+            console.log('WebSocket connection closed:', e);
+        };
+
+
+
+        const sendButton = document.getElementById('sendButton');
+        const messageInput = document.getElementById('messageInput');
+
+
+        sendButton.onclick = function () {
+            const message = messageInput.value.trim();
+            if (message) {
+                chatSocket.send(JSON.stringify({ message: message}));
+                messageInput.value = '';
+            }
+        };
+
+</script>
+</body>
+</html>
